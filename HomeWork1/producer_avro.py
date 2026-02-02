@@ -5,19 +5,19 @@ from confluent_kafka.schema_registry.avro import AvroSerializer
 from confluent_kafka.serializing_producer import SerializingProducer
 
 # 1. Define the Avro Schema
-avro_schema_str = """
-{
-  "namespace": "example.avro",
-  "type": "record",
-  "name": "Movie",
-  "fields": [
-    {"name": "movieId", "type": "int"},
-    {"name": "title", "type": "string"},
-    {"name": "genres", "type": "string"},
-    {"name": "rating", "type": "double"}
-  ]
-}
-"""
+#avro_schema_str = """
+#{
+#  "namespace": "example.avro",
+#  "type": "record",
+#  "name": "Movie",
+#  "fields": [
+#    {"name": "movieId", "type": "int"},
+#    {"name": "title", "type": "string"},
+#    {"name": "genres", "type": "string"},
+#    {"name": "rating", "type": "double"}
+#  ]
+#}
+#"""
 
 # 2. Setup Registry Client and Serializer
 sr_conf = {'url': 'http://localhost:8081'}
@@ -25,11 +25,14 @@ schema_registry_client = SchemaRegistryClient(sr_conf)
 
 #======
 # Setup Client
-subject = 'supplier-avro-topic-value'
+#subject = 'supplier-avro-topic-value'
+#subject = 'supplier-topic-value'
+subject = 'supplier-topic-forward-value'
+#subject = 'supplier-topic-full-value'
 
 # PULL SCHEMA VERSION 1 FROM REGISTRY
 # Note: This assumes you have already registered at least two versions
-db_meta = schema_registry_client.get_version(subject, version=1)
+db_meta = schema_registry_client.get_version(subject, version=4)
 avro_schema_str = db_meta.schema.schema_str
 
 print(f"Producer pulled Schema Version: {db_meta.version}")
@@ -55,9 +58,15 @@ producer_conf = {
 p = SerializingProducer(producer_conf)
         
 #data = {"movieId": 1, "title": "Inception1", "genres": "Action, Sci-Fi", "rating": 1.9, "like" : 5}
-data = {"supplierId": 2, "supplierName": "B", "address": "1/1", "BankAccount" : "123-123-123", "rating": 9.9 }
+# Initial data
+#data = {"supplierId": 2, "supplierName": "B", "address": "1/1", "BankAccount" : "123-123-123", "rating": 9.9 }
+# Add field "salename" 
+data = {"supplierId": 10, "supplierName": "B", "address": "1/1", "BankAccount" : "123-123-123", "rating": 9.9, "salename" : "Test" } 
+# Delete field "salename" 
+#data = {"supplierId": 3, "supplierName": "B", "address": "1/1", "BankAccount" : "123-123-123", "rating": 9.9, "salename" : "Test" } 
+
 print(data)
 # Produce - SerializingProducer handles encoding automatically
-p.produce(topic='supplier-avro-topic', key="c001", value=data)
+p.produce(topic='supplier-topic-forward', key="c001", value=data)
 p.flush()
 print("Avro message produced.")

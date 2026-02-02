@@ -20,6 +20,8 @@ avro_schema_str = """
 }
 """
 
+#{"name": "salename", "type": "string", "default": "unknown"} # Experiment : Add field     
+
 # 2. Setup Registry Client and Serializer
 sr_conf = {'url': 'http://localhost:8081'}
 schema_registry_client = SchemaRegistryClient(sr_conf)
@@ -37,6 +39,6 @@ p = SerializingProducer(producer_conf)
 data = {"supplierId": 1, "supplierName": "A", "address": "1/1", "BankAccount" : "123-123-123", "rating": 9.9 }
 print(data)
 # Produce - SerializingProducer handles encoding automatically
-p.produce(topic='supplier-avro-topic', key="c001", value=data)
+p.produce(topic='supplier-topic-full', key="c001", value=data)
 p.flush()
 print("Avro message produced.")

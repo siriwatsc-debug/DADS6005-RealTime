@@ -17,12 +17,16 @@ consumer_conf = {
     'bootstrap.servers': 'localhost:8097,localhost:8098,localhost:8099',
     'key.deserializer': StringDeserializer(),
     'value.deserializer': avro_deserializer,
-    'group.id': 'supplier-avro-group',
+    #'group.id': 'supplier-avro-group-init',
+    'group.id': 'supplier-avro-group-forward-add-field',
+    #'group.id': 'supplier-avro-group-forward-delete-field',
+    #'group.id': 'supplier-avro-group-full-delete-field',
+    #'group.id': 'supplier-avro-group-full-add-field',
     'auto.offset.reset': 'earliest'
 }
 
 consumer = DeserializingConsumer(consumer_conf)
-consumer.subscribe(['supplier-avro-topic'])
+consumer.subscribe(['supplier-topic-forward'])
 
 print("Waiting for Avro messages...")
 
